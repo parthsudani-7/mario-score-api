@@ -1,9 +1,17 @@
 const { createClient } = require("@supabase/supabase-js");
 
-const ALLOWED_ORIGIN = "https://parthsudani-7.github.io";
+const ALLOWED_ORIGINS = [
+  "https://parthsudani-7.github.io",
+  "https://mario-match-game-five.vercel.app"
+];
 
 module.exports = async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+  const origin = req.headers.origin;
+
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -17,9 +25,7 @@ module.exports = async (req, res) => {
     });
   }
 
-  const origin = req.headers.origin;
-
-  if (origin !== ALLOWED_ORIGIN) {
+  if (!ALLOWED_ORIGINS.includes(origin)) {
     return res.status(403).json({
       error: "Forbidden: Invalid origin"
     });
